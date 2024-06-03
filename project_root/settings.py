@@ -8,7 +8,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 env = environ.Env(DEBUG=(bool, False))
 env.read_env(os.path.join(BASE_DIR, ".env"))
 
-SECRET_KEY = env("DEBUG")
+SECRET_KEY = env("SECRET_KEY")
 
 DEBUG = env("DEBUG")
 
@@ -22,6 +22,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
 
     'ml_analyzer',
 
@@ -112,3 +113,7 @@ MIGRATION_LINTER_OPTIONS = {
     "no_cache": True,
 }
 
+SITE_ID = 1
+CURRENT_HOST = env("CURRENT_HOST")
+CURRENT_PORT = env("CURRENT_PORT")
+SUDO_PASSWORD = env("SUDO_PASSWORD")
