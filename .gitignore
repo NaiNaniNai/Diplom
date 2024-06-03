@@ -140,4 +140,6 @@ GitHub.sublime-settings
 
 
 #My files
-ml_analyzer/http_trafiic.pcap
+ml_analyzer/http_traffic.pcap
+http_traffic.pcap
+ml_analyzer/pcap_files

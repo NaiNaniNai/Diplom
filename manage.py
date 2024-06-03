@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """Django's command-line utility for administrative tasks."""
-from ml_analyzer.service import run_analyzer as analyzer_run
+from ml_analyzer.service import main as analyzer_run
 
 import os
 import sys
