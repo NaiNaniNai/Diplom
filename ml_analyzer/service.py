@@ -3,7 +3,9 @@ import threading
 import os
 from datetime import datetime
 
-from project_root.settings import CURRENT_HOST, CURRENT_PORT, SUDO_PASSWORD
+from scapy.layers.inet import IP, TCP, UDP
+
+from project_root.settings import CURRENT_PORT, SUDO_PASSWORD
 from scapy.all import rdpcap
 
 
@@ -39,8 +41,49 @@ def reader_file(absolute_url_save_directory, save_directory):
             print("Файл пуст!")
         else:
             packets = rdpcap(file_path)
-            print(packets)
-    # packets = rdpcap(absolute_url_save_directory+"16:32:08_http_traffic.pcap")
+
+            num_packets = len(packets)
+            num_bytes = sum(len(packet) for packet in packets)
+            start_time = packets[0].time
+            end_time = packets[-1].time
+            duration = end_time - start_time
+            packet_rate = num_packets / duration
+            inter_arrival_times = sum([packets[i + 1].time - packets[i].time for i in range(num_packets - 1)])
+
+            data = []
+
+            for packet in packets:
+                packet_info = {
+                    'packet_size': len(packet),
+                    'duration': packet.time - start_time,
+                    'src_port': None,
+                    'dst_port': None,
+                    'protocol': None,
+                    'src_ip': None,
+                    'dst_ip': None
+                }
+
+                if IP in packet:
+                    packet_info['src_ip'] = packet[IP].src
+                    packet_info['dst_ip'] = packet[IP].dst
+                    if TCP in packet:
+                        packet_info['protocol'] = 'TCP'
+                        packet_info['src_port'] = packet[TCP].sport
+                        packet_info['dst_port'] = packet[TCP].dport
+                    elif UDP in packet:
+                        packet_info['protocol'] = 'UDP'
+                        packet_info['src_port'] = packet[UDP].sport
+                        packet_info['dst_port'] = packet[UDP].dport
+
+                data.append(packet_info)
+                return {
+                    'packet_rate': packet_rate,
+                    'inter_arrival_times': inter_arrival_times,
+                    'num_packets': num_packets,
+                    'num_bytes': num_bytes,
+                    'duration': duration,
+                    'packet_data': data
+                }
 
 
 def main():
@@ -58,9 +101,11 @@ def main():
     if not os.path.exists(absolute_url_save_directory):
         os.makedirs(absolute_url_save_directory)
 
-    # run_analyzer(output_file)
-    reader_file(absolute_url_save_directory, save_directory)
+    run_analyzer(output_file)
+    a = reader_file(absolute_url_save_directory, save_directory)
+    print(a)
 
 
 if __name__ == '__main__':
     main()
+
