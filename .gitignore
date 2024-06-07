@@ -137,3 +137,9 @@ GitHub.sublime-settings
 !.vscode/launch.json
 !.vscode/extensions.json
 .history
+
+
+#My files
+ml_analyzer/http_traffic.pcap
+http_traffic.pcap
+ml_analyzer/pcap_files
