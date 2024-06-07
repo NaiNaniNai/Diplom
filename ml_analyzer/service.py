@@ -15,10 +15,13 @@ def run_tcpdump(port, output_file, password):
     def tcpdump_process():
         try:
             process = subprocess.Popen(
-                ['sudo', '-S'] + command.split(),
-                stdin=subprocess.PIPE, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True
+                ["sudo", "-S"] + command.split(),
+                stdin=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                stdout=subprocess.PIPE,
+                universal_newlines=True,
             )
-            process.communicate(password + '\n')
+            process.communicate(password + "\n")
         except Exception as e:
             print(f"Произошла ошибка при запуске tcpdump: {e}")
 
@@ -48,41 +51,43 @@ def reader_file(absolute_url_save_directory, save_directory):
             end_time = packets[-1].time
             duration = end_time - start_time
             packet_rate = num_packets / duration
-            inter_arrival_times = sum([packets[i + 1].time - packets[i].time for i in range(num_packets - 1)])
+            inter_arrival_times = sum(
+                [packets[i + 1].time - packets[i].time for i in range(num_packets - 1)]
+            )
 
             data = []
 
             for packet in packets:
                 packet_info = {
-                    'packet_size': len(packet),
-                    'duration': packet.time - start_time,
-                    'src_port': None,
-                    'dst_port': None,
-                    'protocol': None,
-                    'src_ip': None,
-                    'dst_ip': None
+                    "packet_size": len(packet),
+                    "duration": packet.time - start_time,
+                    "src_port": None,
+                    "dst_port": None,
+                    "protocol": None,
+                    "src_ip": None,
+                    "dst_ip": None,
                 }
 
                 if IP in packet:
-                    packet_info['src_ip'] = packet[IP].src
-                    packet_info['dst_ip'] = packet[IP].dst
+                    packet_info["src_ip"] = packet[IP].src
+                    packet_info["dst_ip"] = packet[IP].dst
                     if TCP in packet:
-                        packet_info['protocol'] = 'TCP'
-                        packet_info['src_port'] = packet[TCP].sport
-                        packet_info['dst_port'] = packet[TCP].dport
+                        packet_info["protocol"] = "TCP"
+                        packet_info["src_port"] = packet[TCP].sport
+                        packet_info["dst_port"] = packet[TCP].dport
                     elif UDP in packet:
-                        packet_info['protocol'] = 'UDP'
-                        packet_info['src_port'] = packet[UDP].sport
-                        packet_info['dst_port'] = packet[UDP].dport
+                        packet_info["protocol"] = "UDP"
+                        packet_info["src_port"] = packet[UDP].sport
+                        packet_info["dst_port"] = packet[UDP].dport
 
                 data.append(packet_info)
                 return {
-                    'packet_rate': packet_rate,
-                    'inter_arrival_times': inter_arrival_times,
-                    'num_packets': num_packets,
-                    'num_bytes': num_bytes,
-                    'duration': duration,
-                    'packet_data': data
+                    "packet_rate": packet_rate,
+                    "inter_arrival_times": inter_arrival_times,
+                    "num_packets": num_packets,
+                    "num_bytes": num_bytes,
+                    "duration": duration,
+                    "packet_data": data,
                 }
 
 
@@ -106,6 +111,5 @@ def main():
     print(a)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
-
