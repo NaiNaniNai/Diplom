@@ -12,6 +12,9 @@ from tensorflow.python.keras.engine import data_adapter
 from project_root.settings import CURRENT_PORT, SUDO_PASSWORD
 
 
+# from ml_analyzer.models import AnalyzedTraffic
+
+
 def run_tcpdump(port, output_file, password):
     command = f"tcpdump -i any port {port} -w {output_file}"
 
@@ -129,6 +132,28 @@ def _is_distributed_dataset(ds):
     return isinstance(ds, data_adapter.input_lib.DistributedDatasetSpec)
 
 
+def writing_in_db(data, label):
+    data = [
+        float(data["packet_rate"]),
+        float(data["inter_arrival_times"]),
+        float(data["packet_data"][0]["packet_size"]),
+        float(data["duration"]),
+        data["packet_data"][0]["src_port"],
+        data["packet_data"][0]["dst_port"],
+        float(data["num_packets"]),
+        float(data["num_bytes"]),
+        data["packet_data"][0]["protocol"],
+        data["packet_data"][0]["src_ip"],
+        data["packet_data"][0]["dst_ip"],
+        label
+    ]
+    attrs = ["packet_rate", "inter_arrival_times", "packet_size", "duration", "src_port", "dst_port", "num_packets",
+             "num_bytes", "protocol", "src_ip", "dst_ip", "label"]
+    data_dict = dict(zip(attrs, data))
+    # AnalyzedTraffic.objects.create(**data_dict)
+    print(data_dict)
+
+
 def main():
     current_directory = os.path.dirname(os.path.abspath(__file__))
     pcap_files_directory = "pcap_files/"
@@ -153,7 +178,14 @@ def main():
     )
 
     a = model_loaded.predict(normal_data)
+
     print(f"Результат: {a}")
+    if a[0][0] > a[0][1]:
+        label = "Атака"
+    else:
+        label = "Нормальная активность"
+
+    writing_in_db(data, label)
 
 
 if __name__ == "__main__":
