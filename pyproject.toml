@@ -12,6 +12,9 @@ django-environ = "^0.11.2"
 psycopg2 = "^2.9.9"
 scapy = "^2.5.0"
 celery = "^5.4.0"
+numpy = "^1.26.4"
+keras = "^3.3.3"
+tensorflow = "^2.16.1"
 
 
 [build-system]
