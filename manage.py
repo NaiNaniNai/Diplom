@@ -3,7 +3,7 @@
 import os
 import sys
 
-from ml_analyzer.service import main as analyzer_run
+from ml_analyzer.backend import main as analyzer_run
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
 
