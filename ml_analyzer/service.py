@@ -11,6 +11,7 @@ from ml_analyzer.models import AnalyzedTraffic
 class ReaderPcapFile:
 
     from ml_analyzer.models import AnalyzedTraffic
+
     """Class for read pcap files and writing in database"""
 
     def _reader_file(self, absolute_url_save_directory):
@@ -29,7 +30,10 @@ class ReaderPcapFile:
                 duration = end_time - start_time
                 packet_rate = num_packets / duration
                 inter_arrival_times = sum(
-                    [packets[i + 1].time - packets[i].time for i in range(num_packets - 1)]
+                    [
+                        packets[i + 1].time - packets[i].time
+                        for i in range(num_packets - 1)
+                    ]
                 )
 
                 data = []
@@ -110,10 +114,22 @@ class ReaderPcapFile:
             data["packet_data"][0]["protocol"],
             data["packet_data"][0]["src_ip"],
             data["packet_data"][0]["dst_ip"],
-            label
+            label,
         ]
-        attrs = ["packet_rate", "inter_arrival_time", "packet_size", "duration", "src_port", "dst_port", "num_packets",
-                 "num_bytes", "protocol", "src_ip", "dst_ip", "label"]
+        attrs = [
+            "packet_rate",
+            "inter_arrival_time",
+            "packet_size",
+            "duration",
+            "src_port",
+            "dst_port",
+            "num_packets",
+            "num_bytes",
+            "protocol",
+            "src_ip",
+            "dst_ip",
+            "label",
+        ]
         data_dict = dict(zip(attrs, data))
         print(data_dict)
         AnalyzedTraffic.objects.create(**data_dict)
