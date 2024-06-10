@@ -1,6 +1,6 @@
 from django.db import models
 
-from choices import LABEL
+from ml_analyzer.choices import LABEL
 
 
 class AnalyzedTraffic(models.Model):
